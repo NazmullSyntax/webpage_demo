@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
+  <title>TradeVault · Trading Dashboard</title>
+  <!-- Font Awesome 6 (Free) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* ----- RESET & BASE ----- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background: #0b121c;
+      color: #e8edf5;
+      line-height: 1.5;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      background: none;
+      font: inherit;
+    }
+
+    .container {
+      max-width: 1340px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* ----- HEADER / NAV (trading style) ----- */
+    .header {
+      background: #0f172a;
+      border-bottom: 1px solid #1e2a3a;
+      padding: 0.65rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .header .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+    }
+
+    .logo {
+      font-size: 1.7rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .logo i {
+      color: #22c55e;
+      font-size: 1.8rem;
+    }
+    .logo span {
+      background: linear-gradient(145deg, #22c55e, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: #94a3b8;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: #f1f5f9;
+    }
+    .nav-links a.active {
+      color: #22c55e;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    .header-actions i {
+      font-size: 1.2rem;
+      color: #94a3b8;
+      transition: color 0.2s;
+    }
+    .header-actions i:hover {
+      color: #f1f5f9;
+    }
+    .badge-icon {
+      position: relative;
+    }
+    .badge-dot {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      width: 10px;
+      height: 10px;
+      background: #22c55e;
+      border-radius: 50%;
+      border: 2px solid #0f172a;
+    }
+
+    /* ----- TICKER TAPE (crypto style) ----- */
+    .ticker-wrap {
+      background: #0f172a;
+      border-bottom: 1px solid #1e2a3a;
+      padding: 0.45rem 0;
+      overflow: hidden;
+      white-space: nowrap;
+      font-size: 0.9rem;
+      color: #cbd5e1;
+    }
+    .ticker-inner {
+      display: inline-block;
+      animation: tickerScroll 28s linear infinite;
+      padding-left: 100%;
+    }
+    .ticker-item {
+      display: inline-block;
+      margin-right: 2.5rem;
+    }
+    .ticker-item .up { color: #22c55e; }
+    .ticker-item .down { color: #ef4444; }
+    .ticker-item i { margin: 0 0.3rem; }
+
+    @keyframes tickerScroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+
+    /* ----- DASHBOARD LAYOUT ----- */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 1.8rem;
+      margin: 2rem 0 3rem;
+    }
+
+    /* left column: watchlist + chart placeholder */
+    .watchlist-section {
+      background: #111c2e;
+      border-radius: 1.5rem;
+      padding: 1.2rem 1.2rem 0.8rem;
+      border: 1px solid #1e2a3a;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.2rem;
+    }
+    .section-header h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .section-header h2 i {
+      color: #22c55e;
+    }
+    .section-header .add-btn {
+      background: #1e2a3a;
+      padding: 0.25rem 1rem;
+      border-radius: 30px;
+      color: #cbd5e1;
+      font-size: 0.8rem;
+      transition: 0.2s;
+    }
+    .section-header .add-btn:hover {
+      background: #22c55e;
+      color: #0b121c;
+    }
+
+    .watchlist-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    .watchlist-table th {
+      text-align: left;
+      color: #64748b;
+      font-weight: 500;
+      padding: 0.4rem 0.2rem;
+      border-bottom: 1px solid #1e2a3a;
+    }
+    .watchlist-table td {
+      padding: 0.7rem 0.2rem;
+      border-bottom: 1px solid #1a2638;
+    }
+    .watchlist-table tr:last-child td {
+      border-bottom: none;
+    }
+    .watchlist-table .pair {
+      font-weight: 600;
+    }
+    .watchlist-table .price {
+      font-weight: 500;
+    }
+    .watchlist-table .change.positive { color: #22c55e; }
+    .watchlist-table .change.negative { color: #ef4444; }
+    .watchlist-table .fav i {
+      color: #facc15;
+      font-size: 0.9rem;
+    }
+
+    .chart-placeholder {
+      background: #0f172a;
+      border-radius: 1rem;
+      padding: 1.8rem 0.5rem;
+      margin-top: 1.5rem;
+      text-align: center;
+      border: 1px dashed #2a3a52;
+      color: #64748b;
+    }
+    .chart-placeholder i {
+      font-size: 2.5rem;
+      color: #2a3a52;
+      margin-bottom: 0.5rem;
+    }
+
+    /* right column: order panel / portfolio */
+    .order-panel {
+      background: #111c2e;
+      border-radius: 1.5rem;
+      padding: 1.5rem 1.2rem;
+      border: 1px solid #1e2a3a;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+      display: flex;
+      flex-direction: column;
+      gap: 1.8rem;
+    }
+
+    .balance-box {
+      background: #0f172a;
+      border-radius: 1rem;
+      padding: 1rem 1.2rem;
+      border: 1px solid #1e2a3a;
+    }
+    .balance-box .label {
+      color: #94a3b8;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .balance-box .amount {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin: 0.2rem 0 0.4rem;
+    }
+    .balance-box .amount small {
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: #94a3b8;
+      margin-left: 0.3rem;
+    }
+    .balance-row {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 0.5rem;
+    }
+    .balance-row .col {
+      font-size: 0.8rem;
+      color: #94a3b8;
+    }
+    .balance-row .col strong {
+      color: #e8edf5;
+    }
+
+    .trade-form label {
+      display: block;
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin-bottom: 0.2rem;
+      margin-top: 0.8rem;
+    }
+    .trade-form input, .trade-form select {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      border-radius: 0.8rem;
+      background: #0f172a;
+      border: 1px solid #1e2a3a;
+      color: #f1f5f9;
+      font-size: 0.95rem;
+      outline: none;
+    }
+    .trade-form input:focus, .trade-form select:focus {
+      border-color: #22c55e;
+    }
+    .trade-form .dual-btn {
+      display: flex;
+      gap: 0.8rem;
+      margin-top: 1.2rem;
+    }
+    .trade-form .dual-btn button {
+      flex: 1;
+      padding: 0.65rem;
+      border-radius: 60px;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+    .btn-buy {
+      background: #22c55e;
+      color: #0b121c;
+    }
+    .btn-buy:hover {
+      background: #16a34a;
+    }
+    .btn-sell {
+      background: #ef4444;
+      color: white;
+    }
+    .btn-sell:hover {
+      background: #dc2626;
+    }
+
+    .quick-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+    }
+    .stat-card {
+      background: #0f172a;
+      border-radius: 0.8rem;
+      padding: 0.6rem 0.8rem;
+      border: 1px solid #1e2a3a;
+      text-align: center;
+    }
+    .stat-card .num {
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+    .stat-card .lbl {
+      font-size: 0.65rem;
+      color: #64748b;
+      text-transform: uppercase;
+    }
+
+    /* ----- FOOTER (minimal) ----- */
+    .footer {
+      border-top: 1px solid #1e2a3a;
+      padding: 1.8rem 0;
+      margin-top: 1.5rem;
+      color: #64748b;
+      font-size: 0.85rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer i { color: #22c55e; }
+
+    /* responsive */
+    @media (max-width: 880px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      .order-panel {
+        order: 2;
+      }
+      .watchlist-section {
+        order: 1;
+      }
+      .nav-links { display: none; }
+    }
+    @media (max-width: 480px) {
+      .balance-row { flex-direction: column; gap: 0.2rem; }
+      .quick-stats { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="container">
+    <div class="logo">
+      <i class="fas fa-chart-line"></i>
+      <span>TradeVault</span>
+    </div>
+    <nav class="nav-links">
+      <a href="#" class="active">Dashboard</a>
+      <a href="#">Markets</a>
+      <a href="#">Trade</a>
+      <a href="#">Wallet</a>
+    </nav>
+    <div class="header-actions">
+      <i class="fas fa-bell badge-icon"><span class="badge-dot"></span></i>
+      <i class="fas fa-user-circle"></i>
+      <i class="fas fa-cog"></i>
+    </div>
+  </div>
+</header>
+
+<!-- TICKER TAPE -->
+<div class="ticker-wrap">
+  <div class="ticker-inner" id="tickerInner">
+    <!-- populated from JS -->
+  </div>
+</div>
+
+<!-- MAIN DASHBOARD -->
+<div class="container">
+  <div class="dashboard-grid">
+
+    <!-- LEFT: WATCHLIST + CHART -->
+    <section class="watchlist-section">
+      <div class="section-header">
+        <h2><i class="fas fa-star"></i> Watchlist</h2>
+        <button class="add-btn"><i class="fas fa-plus"></i> Add</button>
+      </div>
+      <table class="watchlist-table" id="watchlistTable">
+        <thead>
+          <tr><th>Pair</th><th>Price</th><th>24h</th><th></th></tr>
+        </thead>
+        <tbody id="watchlistBody">
+          <!-- dynamic -->
+        </tbody>
+      </table>
+      <div class="chart-placeholder">
+        <i class="fas fa-chart-simple"></i>
+        <div>Price chart preview</div>
+        <small style="color:#3b4a5e;">BTC/USD · 1D</small>
+      </div>
+    </section>
+
+    <!-- RIGHT: ORDER PANEL / PORTFOLIO -->
+    <aside class="order-panel">
+      <div class="balance-box">
+        <div class="label">Portfolio balance</div>
+        <div class="amount">$24,850.40 <small>USD</small></div>
+        <div class="balance-row">
+          <div class="col"><strong>+5.23%</strong> today</div>
+          <div class="col"><i class="fas fa-coins"></i> 0.042 BTC</div>
+          <div class="col"><i class="fas fa-coins"></i> 1.24 ETH</div>
+        </div>
+      </div>
+
+      <div class="trade-form">
+        <label>Asset</label>
+        <select>
+          <option>BTC/USD</option>
+          <option>ETH/USD</option>
+          <option>SOL/USD</option>
+          <option>ADA/USD</option>
+        </select>
+        <label>Amount (USD)</label>
+        <input type="text" placeholder="0.00" value="1,200">
+        <label>Order type</label>
+        <select>
+          <option>Market</option>
+          <option>Limit</option>
+          <option>Stop-loss</option>
+        </select>
+        <div class="dual-btn">
+          <button class="btn-buy"><i class="fas fa-arrow-up"></i> Buy</button>
+          <button class="btn-sell"><i class="fas fa-arrow-down"></i> Sell</button>
+        </div>
+      </div>
+
+      <div class="quick-stats">
+        <div class="stat-card"><div class="num">1.2%</div><div class="lbl">24h vol</div></div>
+        <div class="stat-card"><div class="num">$2.4B</div><div class="lbl">Volume</div></div>
+        <div class="stat-card"><div class="num">0.08</div><div class="lbl">BTC spread</div></div>
+        <div class="stat-card"><div class="num">12</div><div class="lbl">Open orders</div></div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="container footer">
+  <span>© 2026 TradeVault · <i class="fas fa-shield-alt"></i> secured</span>
+  <span><i class="fas fa-arrow-trend-up"></i> Real-time · 24/7</span>
+</footer>
+
+<script>
+  (function() {
+    // ----- TICKER DATA (mock) -----
+    const tickerData = [
+      { pair: 'BTC/USD', price: 67234, change: '+2.41%', dir: 'up' },
+      { pair: 'ETH/USD', price: 3456, change: '-0.87%', dir: 'down' },
+      { pair: 'SOL/USD', price: 178.5, change: '+5.12%', dir: 'up' },
+      { pair: 'ADA/USD', price: 0.62, change: '-1.23%', dir: 'down' },
+      { pair: 'DOT/USD', price: 8.94, change: '+0.34%', dir: 'up' },
+      { pair: 'AVAX/USD', price: 42.3, change: '-2.56%', dir: 'down' },
+      { pair: 'MATIC/USD', price: 0.89, change: '+0.76%', dir: 'up' },
+      { pair: 'LINK/USD', price: 14.7, change: '+3.21%', dir: 'up' },
+    ];
+
+    // WATCHLIST (subset)
+    const watchlist = [
+      { pair: 'BTC/USD', price: 67234, change: '+2.41%', dir: 'up', fav: true },
+      { pair: 'ETH/USD', price: 3456, change: '-0.87%', dir: 'down', fav: true },
+      { pair: 'SOL/USD', price: 178.5, change: '+5.12%', dir: 'up', fav: false },
+      { pair: 'ADA/USD', price: 0.62, change: '-1.23%', dir: 'down', fav: false },
+    ];
+
+    // ----- POPULATE TICKER -----
+    const tickerInner = document.getElementById('tickerInner');
+    function buildTickerHTML() {
+      // double the items for seamless loop
+      const items = [...tickerData, ...tickerData];
+      return items.map(t => `
+        <span class="ticker-item">
+          <strong>${t.pair}</strong>
+          $${t.price.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}
+          <span class="${t.dir === 'up' ? 'up' : 'down'}">
+            <i class="fas fa-${t.dir === 'up' ? 'arrow-up' : 'arrow-down'}"></i> ${t.change}
+          </span>
+        </span>
+      `).join('');
+    }
+    if (tickerInner) {
+      tickerInner.innerHTML = buildTickerHTML();
+    }
+
+    // ----- POPULATE WATCHLIST TABLE -----
+    const watchlistBody = document.getElementById('watchlistBody');
+    function renderWatchlist() {
+      watchlistBody.innerHTML = watchlist.map(item => `
+        <tr>
+          <td class="pair">${item.pair} ${item.fav ? '<i class="fas fa-star" style="color:#facc15; font-size:0.7rem;"></i>' : ''}</td>
+          <td class="price">$${item.price.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+          <td class="change ${item.dir === 'up' ? 'positive' : 'negative'}">
+            <i class="fas fa-${item.dir === 'up' ? 'arrow-up' : 'arrow-down'}"></i> ${item.change}
+          </td>
+          <td class="fav"><i class="fas fa-${item.fav ? 'star' : 'star'}" style="color:${item.fav ? '#facc15' : '#1e2a3a'};"></i></td>
+        </tr>
+      `).join('');
+    }
+    renderWatchlist();
+
+    // ----- SIMULATE LIVE PRICE FLUCTUATION (ticker & watchlist) -----
+    function randomFluctuation(basePrice) {
+      const delta = (Math.random() - 0.48) * 0.012; // ~ ±1.2%
+      return basePrice * (1 + delta);
+    }
+
+    function updatePrices() {
+      // update tickerData
+      tickerData.forEach(t => {
+        const newPrice = randomFluctuation(t.price);
+        t.price = Math.round(newPrice * 100) / 100;
+        // random dir change for demo
+        if (Math.random() > 0.65) {
+          t.dir = t.dir === 'up' ? 'down' : 'up';
+          const changeVal = (Math.random() * 3 + 0.2).toFixed(2);
+          t.change = (t.dir === 'up' ? '+' : '-') + changeVal + '%';
+        }
+      });
+
+      // update ticker DOM (re-build)
+      if (tickerInner) {
+        tickerInner.innerHTML = buildTickerHTML();
+      }
+
+      // update watchlist (sync with tickerData)
+      watchlist.forEach(w => {
+        const match = tickerData.find(t => t.pair === w.pair);
+        if (match) {
+          w.price = match.price;
+          w.change = match.change;
+          w.dir = match.dir;
+        }
+      });
+      renderWatchlist();
+
+      // also update balance box (tiny random change)
+      const balanceEl = document.querySelector('.balance-box .amount');
+      if (balanceEl) {
+        const base = 24850.40;
+        const shift = (Math.random() - 0.5) * 20;
+        const newBal = Math.max(0, base + shift);
+        balanceEl.innerHTML = `$${newBal.toFixed(2)} <small>USD</small>`;
+      }
+    }
+
+    // update every 3 seconds
+    setInterval(updatePrices, 3000);
+
+    // ----- ORDER PANEL INTERACTIONS (demo) -----
+    const buyBtn = document.querySelector('.btn-buy');
+    const sellBtn = document.querySelector('.btn-sell');
+    if (buyBtn) {
+      buyBtn.addEventListener('click', function() {
+        alert('🟢 Buy order placed (demo)');
+      });
+    }
+    if (sellBtn) {
+      sellBtn.addEventListener('click', function() {
+        alert('🔴 Sell order placed (demo)');
+      });
+    }
+
+    // watchlist "fav" star click (simple demo)
+    document.addEventListener('click', function(e) {
+      const star = e.target.closest('.fav i');
+      if (star) {
+        const row = star.closest('tr');
+        if (row) {
+          const pairCell = row.querySelector('.pair');
+          if (pairCell) {
+            const pairText = pairCell.textContent.trim().replace('★', '').trim();
+            const item = watchlist.find(w => w.pair === pairText);
+            if (item) {
+              item.fav = !item.fav;
+              renderWatchlist();
+            }
+          }
+        }
+      }
+    });
+
+    // quick add watchlist button (demo)
+    const addBtn = document.querySelector('.add-btn');
+    if (addBtn) {
+      addBtn.addEventListener('click', function() {
+        const newPair = prompt('Enter pair (e.g. AVAX/USD):');
+        if (newPair && newPair.trim().length > 0) {
+          const exists = watchlist.some(w => w.pair === newPair.trim());
+          if (!exists) {
+            watchlist.push({
+              pair: newPair.trim(),
+              price: (Math.random() * 100 + 10).toFixed(2),
+              change: '+0.00%',
+              dir: 'up',
+              fav: false
+            });
+            renderWatchlist();
+            alert(`Added ${newPair.trim()} to watchlist`);
+          } else {
+            alert('Pair already in watchlist.');
+          }
+        }
+      });
+    }
+
+    // slight delay to update ticker animation after load
+    setTimeout(() => {
+      if (tickerInner) {
+        tickerInner.style.animation = 'tickerScroll 28s linear infinite';
+      }
+    }, 100);
+
+  })();
+</script>
+</body>
+</html>
