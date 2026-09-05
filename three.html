@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusTrade | Pro Trading Platform</title>
+    <style>
+        :root {
+            --bg-dark: #0b0e11;
+            --bg-panel: #181a20;
+            --bg-input: #2b313a;
+            --border: #2b313a;
+            --text-main: #eaecef;
+            --text-muted: #848e9c;
+            --green: #0ecb81;
+            --green-hover: #0bb371;
+            --red: #f6465d;
+            --red-hover: #d93d52;
+            --blue: #3861fb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            font-size: 13px;
+        }
+
+        /* Top Header */
+        header {
+            background-color: var(--bg-panel);
+            height: 48px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 16px;
+            color: var(--blue);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ticker-selector {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .symbol-title {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .ticker-stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ticker-stat .label { color: var(--text-muted); font-size: 11px; }
+        .ticker-stat .value { font-weight: 500; }
+        .val-green { color: var(--green); }
+        .val-red { color: var(--red); }
+
+        /* Main Workspace Layout */
+        .workspace {
+            display: grid;
+            grid-template-columns: 1fr 280px 300px;
+            grid-template-rows: 1fr 220px;
+            height: calc(100vh - 48px);
+            gap: 1px;
+            background-color: var(--border);
+        }
+
+        .panel {
+            background-color: var(--bg-panel);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Chart Area */
+        .chart-container {
+            grid-column: 1 / 2;
+            grid-row: 1 / 2;
+            position: relative;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .chart-timeframes span {
+            color: var(--text-muted);
+            margin-right: 12px;
+            cursor: pointer;
+        }
+
+        .chart-timeframes span.active {
+            color: var(--blue);
+            font-weight: bold;
+        }
+
+        .svg-chart {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Order Book */
+        .orderbook-container {
+            grid-column: 2 / 3;
+            grid-row: 1 / 2;
+            padding: 12px;
+        }
+
+        .panel-title {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .ob-header, .ob-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            padding: 3px 0;
+            font-size: 11px;
+        }
+
+        .ob-header { color: var(--text-muted); }
+        .ob-row { position: relative; }
+        .ob-row .bg-bar {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            opacity: 0.15;
+            z-index: 1;
+        }
+        .ob-row span { z-index: 2; }
+        .ob-row.ask .price { color: var(--red); }
+        .ob-row.bid .price { color: var(--green); }
+
+        .current-price-banner {
+            font-size: 16px;
+            font-weight: bold;
+            padding: 8px 0;
+            margin: 4px 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Trade Execution Panel */
+        .trade-container {
+            grid-column: 3 / 4;
+            grid-row: 1 / 3;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .trade-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: var(--bg-dark);
+            border-radius: 4px;
+            padding: 2px;
+        }
+
+        .trade-tab {
+            padding: 8px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .trade-tab.buy.active { background: var(--green); color: white; }
+        .trade-tab.sell.active { background: var(--red); color: white; }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .input-group label { color: var(--text-muted); font-size: 11px; }
+
+        .input-wrapper {
+            background: var(--bg-input);
+            border: 1px solid transparent;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding: 0 8px;
+        }
+
+        .input-wrapper:focus-within { border-color: var(--blue); }
+
+        .input-wrapper input {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            width: 100%;
+            padding: 8px 0;
+            outline: none;
+            font-size: 13px;
+        }
+
+        .input-wrapper span { color: var(--text-muted); }
+
+        .btn-trade {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: auto;
+            color: white;
+        }
+
+        .btn-buy { background: var(--green); }
+        .btn-buy:hover { background: var(--green-hover); }
+        .btn-sell { background: var(--red); }
+        .btn-sell:hover { background: var(--red-hover); }
+
+        /* Bottom Orders Panel */
+        .orders-container {
+            grid-column: 1 / 3;
+            grid-row: 2 / 3;
+            padding: 12px;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            margin-top: 8px;
+        }
+
+        .orders-table th {
+            color: var(--text-muted);
+            font-weight: normal;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .orders-table td {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .action-btn {
+            color: var(--red);
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation Header -->
+    <header>
+        <div class="logo">⚡ NEXUSTRADE</div>
+        <div class="ticker-selector">
+            <div class="symbol-title">BTC / USDT</div>
+            <div class="ticker-stat">
+                <span class="label">Mark Price</span>
+                <span class="value val-green" id="header-price">$64,230.50</span>
+            </div>
+            <div class="ticker-stat">
+                <span class="label">24h Change</span>
+                <span class="value val-green">+3.42%</span>
+            </div>
+            <div class="ticker-stat">
+                <span class="label">24h High</span>
+                <span class="value">$65,100.00</span>
+            </div>
+            <div class="ticker-stat">
+                <span class="label">24h Low</span>
+                <span class="value">$62,800.00</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Trading Dashboard -->
+    <div class="workspace">
+        
+        <!-- Live Line Chart -->
+        <div class="panel chart-container">
+            <div class="chart-header">
+                <div class="chart-timeframes">
+                    <span class="active">1m</span>
+                    <span>15m</span>
+                    <span>1H</span>
+                    <span>4H</span>
+                    <span>1D</span>
+                </div>
+                <div style="color: var(--text-muted)">Type: Line Area</div>
+            </div>
+            <svg class="svg-chart" viewBox="0 0 500 200" preserveAspectRatio="none">
+                <defs>
+                    <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#0ecb81" stop-opacity="0.25"/>
+                        <stop offset="100%" stop-color="#0ecb81" stop-opacity="0.0"/>
+                    </linearGradient>
+                </defs>
+                <path id="chart-area" fill="url(#chartGrad)" d="" />
+                <path id="chart-line" fill="none" stroke="#0ecb81" stroke-width="2" d="" />
+            </svg>
+        </div>
+
+        <!-- Live Order Book -->
+        <div class="panel orderbook-container">
+            <div class="panel-title">Order Book</div>
+            <div class="ob-header">
+                <span>Price (USDT)</span>
+                <span style="text-align: right;">Size (BTC)</span>
+                <span style="text-align: right;">Total</span>
+            </div>
+            
+            <!-- Asks (Sells) -->
+            <div id="asks-list" style="display: flex; flex-direction: column-reverse; margin-top: 4px;"></div>
+            
+            <div class="current-price-banner val-green" id="ob-current-price">
+                64,230.50 ↑
+            </div>
+
+            <!-- Bids (Buys) -->
+            <div id="bids-list"></div>
+        </div>
+
+        <!-- Order Form Panel -->
+        <div class="panel trade-container">
+            <div class="panel-title">Spot Order</div>
+            <div class="trade-tabs">
+                <div class="trade-tab buy active" id="tab-buy" onclick="setSide('buy')">Buy</div>
+                <div class="trade-tab sell" id="tab-sell" onclick="setSide('sell')">Sell</div>
+            </div>
+
+            <div class="input-group">
+                <label>Order Price</label>
+                <div class="input-wrapper">
+                    <input type="number" id="input-price" value="64230.50" step="0.5">
+                    <span>USDT</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Amount</label>
+                <div class="input-wrapper">
+                    <input type="number" id="input-amount" value="0.1" step="0.01">
+                    <span>BTC</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Total Value</label>
+                <div class="input-wrapper">
+                    <input type="number" id="input-total" value="6423.05" readonly>
+                    <span>USDT</span>
+                </div>
+            </div>
+
+            <button class="btn-trade btn-buy" id="trade-btn" onclick="executeOrder()">Buy BTC</button>
+        </div>
+
+        <!-- Open Orders and History -->
+        <div class="panel orders-container">
+            <div class="panel-title">Open Positions & Orders</div>
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Type</th>
+                        <th>Side</th>
+                        <th>Price</th>
+                        <th>Amount</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="orders-list">
+                    <!-- Dynamic Orders -->
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- JavaScript Engine -->
+    <script>
+        let currentPrice = 64230.50;
+        let currentSide = 'buy';
+        let chartPoints = [120, 115, 118, 110, 105, 98, 102, 95, 88, 92, 85, 80];
+
+        // Sync Form Input Calculations
+        const priceInput = document.getElementById('input-price');
+        const amountInput = document.getElementById('input-amount');
+        const totalInput = document.getElementById('input-total');
+
+        function calculateTotal() {
+            const p = parseFloat(priceInput.value) || 0;
+            const a = parseFloat(amountInput.value) || 0;
+            totalInput.value = (p * a).toFixed(2);
+        }
+
+        priceInput.addEventListener('input', calculateTotal);
+        amountInput.addEventListener('input', calculateTotal);
+
+        // Toggle Buy/Sell Tabs
+        function setSide(side) {
+            currentSide = side;
+            const buyTab = document.getElementById('tab-buy');
+            const sellTab = document.getElementById('tab-sell');
+            const tradeBtn = document.getElementById('trade-btn');
+
+            if (side === 'buy') {
+                buyTab.classList.add('active');
+                sellTab.classList.remove('active');
+                tradeBtn.className = 'btn-trade btn-buy';
+                tradeBtn.textContent = 'Buy BTC';
+            } else {
+                sellTab.classList.add('active');
+                buyTab.classList.remove('active');
+                tradeBtn.className = 'btn-trade btn-sell';
+                tradeBtn.textContent = 'Sell BTC';
+            }
+        }
+
+        // Render Dynamic SVG Chart Path
+        function renderChart() {
+            const width = 500;
+            const height = 200;
+            const step = width / (chartPoints.length - 1);
+
+            let pathD = `M 0 ${chartPoints[0]}`;
+            for (let i = 1; i < chartPoints.length; i++) {
+                pathD += ` L ${i * step} ${chartPoints[i]}`;
+            }
+
+            document.getElementById('chart-line').setAttribute('d', pathD);
+            
+            const areaD = `${pathD} L ${width} ${height} L 0 ${height} Z`;
+            document.getElementById('chart-area').setAttribute('d', areaD);
+        }
+
+        // Simulate Live Order Book Updates
+        function generateOrderBook() {
+            const asksList = document.getElementById('asks-list');
+            const bidsList = document.getElementById('bids-list');
+
+            asksList.innerHTML = '';
+            bidsList.innerHTML = '';
+
+            // Generate Asks (Sell Orders)
+            for (let i = 5; i >= 1; i--) {
+                const price = (currentPrice + i * 1.5).toFixed(2);
+                const size = (Math.random() * 0.8 + 0.1).toFixed(4);
+                const total = (price * size / 1000).toFixed(2);
+                const bgWidth = Math.min(size * 100, 100);
+
+                asksList.innerHTML += `
+                    <div class="ob-row ask">
+                        <div class="bg-bar" style="width: ${bgWidth}%; background-color: var(--red);"></div>
+                        <span class="price">${price}</span>
+                        <span style="text-align: right;">${size}</span>
+                        <span style="text-align: right; color: var(--text-muted);">${total}k</span>
+                    </div>`;
+            }
+
+            // Generate Bids (Buy Orders)
+            for (let i = 1; i <= 5; i++) {
+                const price = (currentPrice - i * 1.5).toFixed(2);
+                const size = (Math.random() * 0.8 + 0.1).toFixed(4);
+                const total = (price * size / 1000).toFixed(2);
+                const bgWidth = Math.min(size * 100, 100);
+
+                bidsList.innerHTML += `
+                    <div class="ob-row bid">
+                        <div class="bg-bar" style="width: ${bgWidth}%; background-color: var(--green);"></div>
+                        <span class="price">${price}</span>
+                        <span style="text-align: right;">${size}</span>
+                        <span style="text-align: right; color: var(--text-muted);">${total}k</span>
+                    </div>`;
+            }
+        }
+
+        // Real-Time Price Simulation Engine
+        setInterval(() => {
+            const delta = (Math.random() - 0.49) * 5;
+            currentPrice += delta;
+            
+            const formattedPrice = currentPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            
+            const headerPrice = document.getElementById('header-price');
+            const obPrice = document.getElementById('ob-current-price');
+            
+            headerPrice.textContent = `$${formattedPrice}`;
+            obPrice.textContent = `${formattedPrice} ${delta >= 0 ? '↑' : '↓'}`;
+            
+            if (delta >= 0) {
+                headerPrice.className = 'value val-green';
+                obPrice.className = 'current-price-banner val-green';
+            } else {
+                headerPrice.className = 'value val-red';
+                obPrice.className = 'current-price-banner val-red';
+            }
+
+            // Update chart array and redraw
+            chartPoints.shift();
+            // Map price movement to SVG coordinate scope (approx 50 to 150)
+            const lastY = chartPoints[chartPoints.length - 1];
+            const newY = Math.max(20, Math.min(180, lastY - delta));
+            chartPoints.push(newY);
+            renderChart();
+
+            generateOrderBook();
+        }, 1500);
+
+        // Execute Order Logic
+        function executeOrder() {
+            const price = parseFloat(priceInput.value).toFixed(2);
+            const amount = parseFloat(amountInput.value).toFixed(4);
+            const time = new Date().toLocaleTimeString();
+
+            const tableBody = document.getElementById('orders-list');
+            const row = document.createElement('tr');
+
+            row.innerHTML = `
+                <td>${time}</td>
+                <td>Limit</td>
+                <td style="color: ${currentSide === 'buy' ? 'var(--green)' : 'var(--red)'}; text-transform: uppercase; font-weight: bold;">${currentSide}</td>
+                <td>$${price}</td>
+                <td>${amount} BTC</td>
+                <td><button class="action-btn" onclick="this.closest('tr').remove()">Cancel</button></td>
+            `;
+
+            tableBody.prepend(row);
+        }
+
+        // Initial Setup
+        renderChart();
+        generateOrderBook();
+        calculateTotal();
+    </script>
+</body>
+</html>
