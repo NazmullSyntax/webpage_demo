@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
-  <title>TradeVault · Trading Dashboard</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5" />
+  <title>TradeVault · Pro Trading Dashboard</title>
   <!-- Font Awesome 6 (Free) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <style>
     /* ----- RESET & BASE ----- */
     * {
@@ -82,7 +82,8 @@
       color: #94a3b8;
       transition: color 0.2s;
     }
-    .nav-links a:hover, .nav-links a.active {
+    .nav-links a:hover,
+    .nav-links a.active {
       color: #f1f5f9;
     }
     .nav-links a.active {
@@ -135,13 +136,23 @@
       display: inline-block;
       margin-right: 2.5rem;
     }
-    .ticker-item .up { color: #22c55e; }
-    .ticker-item .down { color: #ef4444; }
-    .ticker-item i { margin: 0 0.3rem; }
+    .ticker-item .up {
+      color: #22c55e;
+    }
+    .ticker-item .down {
+      color: #ef4444;
+    }
+    .ticker-item i {
+      margin: 0 0.3rem;
+    }
 
     @keyframes tickerScroll {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-100%); }
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-100%);
+      }
     }
 
     /* ----- DASHBOARD LAYOUT ----- */
@@ -158,7 +169,7 @@
       border-radius: 1.5rem;
       padding: 1.2rem 1.2rem 0.8rem;
       border: 1px solid #1e2a3a;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
     }
 
     .section-header {
@@ -215,8 +226,12 @@
     .watchlist-table .price {
       font-weight: 500;
     }
-    .watchlist-table .change.positive { color: #22c55e; }
-    .watchlist-table .change.negative { color: #ef4444; }
+    .watchlist-table .change.positive {
+      color: #22c55e;
+    }
+    .watchlist-table .change.negative {
+      color: #ef4444;
+    }
     .watchlist-table .fav i {
       color: #facc15;
       font-size: 0.9rem;
@@ -243,7 +258,7 @@
       border-radius: 1.5rem;
       padding: 1.5rem 1.2rem;
       border: 1px solid #1e2a3a;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
       display: flex;
       flex-direction: column;
       gap: 1.8rem;
@@ -292,7 +307,8 @@
       margin-bottom: 0.2rem;
       margin-top: 0.8rem;
     }
-    .trade-form input, .trade-form select {
+    .trade-form input,
+    .trade-form select {
       width: 100%;
       padding: 0.6rem 0.8rem;
       border-radius: 0.8rem;
@@ -302,7 +318,8 @@
       font-size: 0.95rem;
       outline: none;
     }
-    .trade-form input:focus, .trade-form select:focus {
+    .trade-form input:focus,
+    .trade-form select:focus {
       border-color: #22c55e;
     }
     .trade-form .dual-btn {
@@ -366,7 +383,9 @@
       justify-content: space-between;
       align-items: center;
     }
-    .footer i { color: #22c55e; }
+    .footer i {
+      color: #22c55e;
+    }
 
     /* responsive */
     @media (max-width: 880px) {
@@ -380,289 +399,326 @@
       .watchlist-section {
         order: 1;
       }
-      .nav-links { display: none; }
+      .nav-links {
+        display: none;
+      }
     }
     @media (max-width: 480px) {
-      .balance-row { flex-direction: column; gap: 0.2rem; }
-      .quick-stats { grid-template-columns: 1fr 1fr; }
+      .balance-row {
+        flex-direction: column;
+        gap: 0.2rem;
+      }
+      .quick-stats {
+        grid-template-columns: 1fr 1fr;
+      }
     }
   </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<header class="header">
+  <!-- HEADER -->
+  <header class="header">
+    <div class="container">
+      <div class="logo">
+        <i class="fas fa-chart-line"></i>
+        <span>TradeVault</span>
+      </div>
+      <nav class="nav-links">
+        <a href="#" class="active">Dashboard</a>
+        <a href="#">Markets</a>
+        <a href="#">Trade</a>
+        <a href="#">Wallet</a>
+      </nav>
+      <div class="header-actions">
+        <i class="fas fa-bell badge-icon"><span class="badge-dot"></span></i>
+        <i class="fas fa-user-circle"></i>
+        <i class="fas fa-cog"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- TICKER TAPE -->
+  <div class="ticker-wrap">
+    <div class="ticker-inner" id="tickerInner">
+      <!-- populated from JS -->
+    </div>
+  </div>
+
+  <!-- MAIN DASHBOARD -->
   <div class="container">
-    <div class="logo">
-      <i class="fas fa-chart-line"></i>
-      <span>TradeVault</span>
-    </div>
-    <nav class="nav-links">
-      <a href="#" class="active">Dashboard</a>
-      <a href="#">Markets</a>
-      <a href="#">Trade</a>
-      <a href="#">Wallet</a>
-    </nav>
-    <div class="header-actions">
-      <i class="fas fa-bell badge-icon"><span class="badge-dot"></span></i>
-      <i class="fas fa-user-circle"></i>
-      <i class="fas fa-cog"></i>
-    </div>
-  </div>
-</header>
+    <div class="dashboard-grid">
 
-<!-- TICKER TAPE -->
-<div class="ticker-wrap">
-  <div class="ticker-inner" id="tickerInner">
-    <!-- populated from JS -->
-  </div>
-</div>
-
-<!-- MAIN DASHBOARD -->
-<div class="container">
-  <div class="dashboard-grid">
-
-    <!-- LEFT: WATCHLIST + CHART -->
-    <section class="watchlist-section">
-      <div class="section-header">
-        <h2><i class="fas fa-star"></i> Watchlist</h2>
-        <button class="add-btn"><i class="fas fa-plus"></i> Add</button>
-      </div>
-      <table class="watchlist-table" id="watchlistTable">
-        <thead>
-          <tr><th>Pair</th><th>Price</th><th>24h</th><th></th></tr>
-        </thead>
-        <tbody id="watchlistBody">
-          <!-- dynamic -->
-        </tbody>
-      </table>
-      <div class="chart-placeholder">
-        <i class="fas fa-chart-simple"></i>
-        <div>Price chart preview</div>
-        <small style="color:#3b4a5e;">BTC/USD · 1D</small>
-      </div>
-    </section>
-
-    <!-- RIGHT: ORDER PANEL / PORTFOLIO -->
-    <aside class="order-panel">
-      <div class="balance-box">
-        <div class="label">Portfolio balance</div>
-        <div class="amount">$24,850.40 <small>USD</small></div>
-        <div class="balance-row">
-          <div class="col"><strong>+5.23%</strong> today</div>
-          <div class="col"><i class="fas fa-coins"></i> 0.042 BTC</div>
-          <div class="col"><i class="fas fa-coins"></i> 1.24 ETH</div>
+      <!-- LEFT: WATCHLIST + CHART -->
+      <section class="watchlist-section">
+        <div class="section-header">
+          <h2><i class="fas fa-star"></i> Watchlist</h2>
+          <button class="add-btn" id="addWatchlistBtn"><i class="fas fa-plus"></i> Add</button>
         </div>
-      </div>
-
-      <div class="trade-form">
-        <label>Asset</label>
-        <select>
-          <option>BTC/USD</option>
-          <option>ETH/USD</option>
-          <option>SOL/USD</option>
-          <option>ADA/USD</option>
-        </select>
-        <label>Amount (USD)</label>
-        <input type="text" placeholder="0.00" value="1,200">
-        <label>Order type</label>
-        <select>
-          <option>Market</option>
-          <option>Limit</option>
-          <option>Stop-loss</option>
-        </select>
-        <div class="dual-btn">
-          <button class="btn-buy"><i class="fas fa-arrow-up"></i> Buy</button>
-          <button class="btn-sell"><i class="fas fa-arrow-down"></i> Sell</button>
+        <table class="watchlist-table" id="watchlistTable">
+          <thead>
+            <tr><th>Pair</th><th>Price</th><th>24h</th><th></th></tr>
+          </thead>
+          <tbody id="watchlistBody">
+            <!-- dynamic -->
+          </tbody>
+        </table>
+        <div class="chart-placeholder">
+          <i class="fas fa-chart-simple"></i>
+          <div>Price chart preview</div>
+          <small style="color:#3b4a5e;">BTC/USD · 1D</small>
         </div>
-      </div>
+      </section>
 
-      <div class="quick-stats">
-        <div class="stat-card"><div class="num">1.2%</div><div class="lbl">24h vol</div></div>
-        <div class="stat-card"><div class="num">$2.4B</div><div class="lbl">Volume</div></div>
-        <div class="stat-card"><div class="num">0.08</div><div class="lbl">BTC spread</div></div>
-        <div class="stat-card"><div class="num">12</div><div class="lbl">Open orders</div></div>
-      </div>
-    </aside>
+      <!-- RIGHT: ORDER PANEL / PORTFOLIO -->
+      <aside class="order-panel">
+        <div class="balance-box">
+          <div class="label">Portfolio balance</div>
+          <div class="amount" id="balanceAmount">$24,850.40 <small>USD</small></div>
+          <div class="balance-row">
+            <div class="col"><strong id="dailyChange">+5.23%</strong> today</div>
+            <div class="col"><i class="fas fa-coins"></i> <span id="btcBalance">0.042</span> BTC</div>
+            <div class="col"><i class="fas fa-coins"></i> <span id="ethBalance">1.24</span> ETH</div>
+          </div>
+        </div>
+
+        <div class="trade-form">
+          <label>Asset</label>
+          <select id="assetSelect">
+            <option value="BTC/USD">BTC/USD</option>
+            <option value="ETH/USD">ETH/USD</option>
+            <option value="SOL/USD">SOL/USD</option>
+            <option value="ADA/USD">ADA/USD</option>
+          </select>
+          <label>Amount (USD)</label>
+          <input type="text" id="tradeAmount" placeholder="0.00" value="1,200" />
+          <label>Order type</label>
+          <select id="orderType">
+            <option>Market</option>
+            <option>Limit</option>
+            <option>Stop-loss</option>
+          </select>
+          <div class="dual-btn">
+            <button class="btn-buy" id="buyBtn"><i class="fas fa-arrow-up"></i> Buy</button>
+            <button class="btn-sell" id="sellBtn"><i class="fas fa-arrow-down"></i> Sell</button>
+          </div>
+        </div>
+
+        <div class="quick-stats">
+          <div class="stat-card"><div class="num" id="statVol">1.2%</div><div class="lbl">24h vol</div></div>
+          <div class="stat-card"><div class="num" id="statVolume">$2.4B</div><div class="lbl">Volume</div></div>
+          <div class="stat-card"><div class="num" id="statSpread">0.08</div><div class="lbl">BTC spread</div></div>
+          <div class="stat-card"><div class="num" id="statOrders">12</div><div class="lbl">Open orders</div></div>
+        </div>
+      </aside>
+    </div>
   </div>
-</div>
 
-<!-- FOOTER -->
-<footer class="container footer">
-  <span>© 2026 TradeVault · <i class="fas fa-shield-alt"></i> secured</span>
-  <span><i class="fas fa-arrow-trend-up"></i> Real-time · 24/7</span>
-</footer>
+  <!-- FOOTER -->
+  <footer class="container footer">
+    <span>© 2026 TradeVault · <i class="fas fa-shield-alt"></i> secured</span>
+    <span><i class="fas fa-arrow-trend-up"></i> Real-time · 24/7</span>
+  </footer>
 
-<script>
-  (function() {
-    // ----- TICKER DATA (mock) -----
-    const tickerData = [
-      { pair: 'BTC/USD', price: 67234, change: '+2.41%', dir: 'up' },
-      { pair: 'ETH/USD', price: 3456, change: '-0.87%', dir: 'down' },
-      { pair: 'SOL/USD', price: 178.5, change: '+5.12%', dir: 'up' },
-      { pair: 'ADA/USD', price: 0.62, change: '-1.23%', dir: 'down' },
-      { pair: 'DOT/USD', price: 8.94, change: '+0.34%', dir: 'up' },
-      { pair: 'AVAX/USD', price: 42.3, change: '-2.56%', dir: 'down' },
-      { pair: 'MATIC/USD', price: 0.89, change: '+0.76%', dir: 'up' },
-      { pair: 'LINK/USD', price: 14.7, change: '+3.21%', dir: 'up' },
-    ];
+  <script>
+    (function() {
+      // ----- TICKER DATA (mock) -----
+      const tickerData = [
+        { pair: 'BTC/USD', price: 67234, change: '+2.41%', dir: 'up' },
+        { pair: 'ETH/USD', price: 3456, change: '-0.87%', dir: 'down' },
+        { pair: 'SOL/USD', price: 178.5, change: '+5.12%', dir: 'up' },
+        { pair: 'ADA/USD', price: 0.62, change: '-1.23%', dir: 'down' },
+        { pair: 'DOT/USD', price: 8.94, change: '+0.34%', dir: 'up' },
+        { pair: 'AVAX/USD', price: 42.3, change: '-2.56%', dir: 'down' },
+        { pair: 'MATIC/USD', price: 0.89, change: '+0.76%', dir: 'up' },
+        { pair: 'LINK/USD', price: 14.7, change: '+3.21%', dir: 'up' },
+      ];
 
-    // WATCHLIST (subset)
-    const watchlist = [
-      { pair: 'BTC/USD', price: 67234, change: '+2.41%', dir: 'up', fav: true },
-      { pair: 'ETH/USD', price: 3456, change: '-0.87%', dir: 'down', fav: true },
-      { pair: 'SOL/USD', price: 178.5, change: '+5.12%', dir: 'up', fav: false },
-      { pair: 'ADA/USD', price: 0.62, change: '-1.23%', dir: 'down', fav: false },
-    ];
+      // WATCHLIST (subset)
+      let watchlist = [
+        { pair: 'BTC/USD', price: 67234, change: '+2.41%', dir: 'up', fav: true },
+        { pair: 'ETH/USD', price: 3456, change: '-0.87%', dir: 'down', fav: true },
+        { pair: 'SOL/USD', price: 178.5, change: '+5.12%', dir: 'up', fav: false },
+        { pair: 'ADA/USD', price: 0.62, change: '-1.23%', dir: 'down', fav: false },
+      ];
 
-    // ----- POPULATE TICKER -----
-    const tickerInner = document.getElementById('tickerInner');
-    function buildTickerHTML() {
-      // double the items for seamless loop
-      const items = [...tickerData, ...tickerData];
-      return items.map(t => `
-        <span class="ticker-item">
-          <strong>${t.pair}</strong>
-          $${t.price.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}
-          <span class="${t.dir === 'up' ? 'up' : 'down'}">
-            <i class="fas fa-${t.dir === 'up' ? 'arrow-up' : 'arrow-down'}"></i> ${t.change}
-          </span>
-        </span>
-      `).join('');
-    }
-    if (tickerInner) {
-      tickerInner.innerHTML = buildTickerHTML();
-    }
+      // ----- DOM REFS -----
+      const tickerInner = document.getElementById('tickerInner');
+      const watchlistBody = document.getElementById('watchlistBody');
+      const balanceAmount = document.getElementById('balanceAmount');
+      const dailyChange = document.getElementById('dailyChange');
+      const btcBalance = document.getElementById('btcBalance');
+      const ethBalance = document.getElementById('ethBalance');
 
-    // ----- POPULATE WATCHLIST TABLE -----
-    const watchlistBody = document.getElementById('watchlistBody');
-    function renderWatchlist() {
-      watchlistBody.innerHTML = watchlist.map(item => `
-        <tr>
-          <td class="pair">${item.pair} ${item.fav ? '<i class="fas fa-star" style="color:#facc15; font-size:0.7rem;"></i>' : ''}</td>
-          <td class="price">$${item.price.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
-          <td class="change ${item.dir === 'up' ? 'positive' : 'negative'}">
-            <i class="fas fa-${item.dir === 'up' ? 'arrow-up' : 'arrow-down'}"></i> ${item.change}
-          </td>
-          <td class="fav"><i class="fas fa-${item.fav ? 'star' : 'star'}" style="color:${item.fav ? '#facc15' : '#1e2a3a'};"></i></td>
-        </tr>
-      `).join('');
-    }
-    renderWatchlist();
-
-    // ----- SIMULATE LIVE PRICE FLUCTUATION (ticker & watchlist) -----
-    function randomFluctuation(basePrice) {
-      const delta = (Math.random() - 0.48) * 0.012; // ~ ±1.2%
-      return basePrice * (1 + delta);
-    }
-
-    function updatePrices() {
-      // update tickerData
-      tickerData.forEach(t => {
-        const newPrice = randomFluctuation(t.price);
-        t.price = Math.round(newPrice * 100) / 100;
-        // random dir change for demo
-        if (Math.random() > 0.65) {
-          t.dir = t.dir === 'up' ? 'down' : 'up';
-          const changeVal = (Math.random() * 3 + 0.2).toFixed(2);
-          t.change = (t.dir === 'up' ? '+' : '-') + changeVal + '%';
-        }
-      });
-
-      // update ticker DOM (re-build)
-      if (tickerInner) {
-        tickerInner.innerHTML = buildTickerHTML();
+      // ----- BUILD TICKER HTML -----
+      function buildTickerHTML() {
+        const items = [...tickerData, ...tickerData];
+        return items.map(t => `
+            <span class="ticker-item">
+              <strong>${t.pair}</strong>
+              $${t.price.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}
+              <span class="${t.dir === 'up' ? 'up' : 'down'}">
+                <i class="fas fa-${t.dir === 'up' ? 'arrow-up' : 'arrow-down'}"></i> ${t.change}
+              </span>
+            </span>
+          `).join('');
       }
 
-      // update watchlist (sync with tickerData)
-      watchlist.forEach(w => {
-        const match = tickerData.find(t => t.pair === w.pair);
-        if (match) {
-          w.price = match.price;
-          w.change = match.change;
-          w.dir = match.dir;
+      function renderTicker() {
+        if (tickerInner) {
+          tickerInner.innerHTML = buildTickerHTML();
         }
-      });
-      renderWatchlist();
-
-      // also update balance box (tiny random change)
-      const balanceEl = document.querySelector('.balance-box .amount');
-      if (balanceEl) {
-        const base = 24850.40;
-        const shift = (Math.random() - 0.5) * 20;
-        const newBal = Math.max(0, base + shift);
-        balanceEl.innerHTML = `$${newBal.toFixed(2)} <small>USD</small>`;
       }
-    }
 
-    // update every 3 seconds
-    setInterval(updatePrices, 3000);
+      // ----- RENDER WATCHLIST -----
+      function renderWatchlist() {
+        watchlistBody.innerHTML = watchlist.map(item => `
+            <tr>
+              <td class="pair">${item.pair} ${item.fav ? '<i class="fas fa-star" style="color:#facc15; font-size:0.7rem;"></i>' : ''}</td>
+              <td class="price">$${item.price.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+              <td class="change ${item.dir === 'up' ? 'positive' : 'negative'}">
+                <i class="fas fa-${item.dir === 'up' ? 'arrow-up' : 'arrow-down'}"></i> ${item.change}
+              </td>
+              <td class="fav"><i class="fas fa-${item.fav ? 'star' : 'star'}" style="color:${item.fav ? '#facc15' : '#1e2a3a'};"></i></td>
+            </tr>
+          `).join('');
+      }
 
-    // ----- ORDER PANEL INTERACTIONS (demo) -----
-    const buyBtn = document.querySelector('.btn-buy');
-    const sellBtn = document.querySelector('.btn-sell');
-    if (buyBtn) {
-      buyBtn.addEventListener('click', function() {
-        alert('🟢 Buy order placed (demo)');
-      });
-    }
-    if (sellBtn) {
-      sellBtn.addEventListener('click', function() {
-        alert('🔴 Sell order placed (demo)');
-      });
-    }
+      // ----- UPDATE PRICES (simulate live) -----
+      function randomFluctuation(basePrice) {
+        const delta = (Math.random() - 0.48) * 0.012;
+        return basePrice * (1 + delta);
+      }
 
-    // watchlist "fav" star click (simple demo)
-    document.addEventListener('click', function(e) {
-      const star = e.target.closest('.fav i');
-      if (star) {
-        const row = star.closest('tr');
-        if (row) {
-          const pairCell = row.querySelector('.pair');
-          if (pairCell) {
-            const pairText = pairCell.textContent.trim().replace('★', '').trim();
-            const item = watchlist.find(w => w.pair === pairText);
-            if (item) {
-              item.fav = !item.fav;
-              renderWatchlist();
-            }
+      function updatePrices() {
+        // update tickerData
+        tickerData.forEach(t => {
+          const newPrice = randomFluctuation(t.price);
+          t.price = Math.round(newPrice * 100) / 100;
+          if (Math.random() > 0.65) {
+            t.dir = t.dir === 'up' ? 'down' : 'up';
+            const changeVal = (Math.random() * 3 + 0.2).toFixed(2);
+            t.change = (t.dir === 'up' ? '+' : '-') + changeVal + '%';
           }
-        }
-      }
-    });
+        });
 
-    // quick add watchlist button (demo)
-    const addBtn = document.querySelector('.add-btn');
-    if (addBtn) {
-      addBtn.addEventListener('click', function() {
+        // update ticker
+        renderTicker();
+
+        // update watchlist (sync with tickerData)
+        watchlist.forEach(w => {
+          const match = tickerData.find(t => t.pair === w.pair);
+          if (match) {
+            w.price = match.price;
+            w.change = match.change;
+            w.dir = match.dir;
+          }
+        });
+        renderWatchlist();
+
+        // update balance & stats with slight random changes
+        const baseBalance = 24850.40;
+        const shift = (Math.random() - 0.5) * 30;
+        const newBal = Math.max(0, baseBalance + shift);
+        balanceAmount.innerHTML = `$${newBal.toFixed(2)} <small>USD</small>`;
+
+        // daily change
+        const daily = (Math.random() * 6 + 1).toFixed(2);
+        const sign = Math.random() > 0.4 ? '+' : '-';
+        dailyChange.textContent = `${sign}${daily}%`;
+        dailyChange.style.color = sign === '+' ? '#22c55e' : '#ef4444';
+
+        // btc/eth balance
+        const btc = (Math.random() * 0.02 + 0.035).toFixed(3);
+        const eth = (Math.random() * 0.3 + 1.1).toFixed(2);
+        btcBalance.textContent = btc;
+        ethBalance.textContent = eth;
+
+        // quick stats
+        document.getElementById('statVol').textContent = (Math.random() * 3 + 0.5).toFixed(1) + '%';
+        document.getElementById('statVolume').textContent = '$' + (Math.random() * 3 + 1.2).toFixed(1) + 'B';
+        document.getElementById('statSpread').textContent = (Math.random() * 0.15 + 0.03).toFixed(2);
+        document.getElementById('statOrders').textContent = Math.floor(Math.random() * 20 + 4);
+      }
+
+      // ----- WATCHLIST INTERACTIONS -----
+      // Add pair
+      document.getElementById('addWatchlistBtn').addEventListener('click', function() {
         const newPair = prompt('Enter pair (e.g. AVAX/USD):');
         if (newPair && newPair.trim().length > 0) {
           const exists = watchlist.some(w => w.pair === newPair.trim());
           if (!exists) {
+            const price = (Math.random() * 100 + 10).toFixed(2);
             watchlist.push({
               pair: newPair.trim(),
-              price: (Math.random() * 100 + 10).toFixed(2),
+              price: parseFloat(price),
               change: '+0.00%',
               dir: 'up',
               fav: false
             });
             renderWatchlist();
+            // also add to tickerData for live updates
+            tickerData.push({
+              pair: newPair.trim(),
+              price: parseFloat(price),
+              change: '+0.00%',
+              dir: 'up'
+            });
             alert(`Added ${newPair.trim()} to watchlist`);
           } else {
             alert('Pair already in watchlist.');
           }
         }
       });
-    }
 
-    // slight delay to update ticker animation after load
-    setTimeout(() => {
+      // Favorite star toggle (delegated)
+      document.addEventListener('click', function(e) {
+        const star = e.target.closest('.fav i');
+        if (star) {
+          const row = star.closest('tr');
+          if (row) {
+            const pairCell = row.querySelector('.pair');
+            if (pairCell) {
+              const pairText = pairCell.textContent.trim().replace('★', '').trim();
+              const item = watchlist.find(w => w.pair === pairText);
+              if (item) {
+                item.fav = !item.fav;
+                renderWatchlist();
+              }
+            }
+          }
+        }
+      });
+
+      // ----- TRADE BUTTONS -----
+      document.getElementById('buyBtn').addEventListener('click', function() {
+        const asset = document.getElementById('assetSelect').value;
+        const amount = document.getElementById('tradeAmount').value || '0';
+        alert(`🟢 Buy order placed for ${asset} · $${amount} (demo)`);
+      });
+
+      document.getElementById('sellBtn').addEventListener('click', function() {
+        const asset = document.getElementById('assetSelect').value;
+        const amount = document.getElementById('tradeAmount').value || '0';
+        alert(`🔴 Sell order placed for ${asset} · $${amount} (demo)`);
+      });
+
+      // ----- INIT & AUTO UPDATE -----
+      renderTicker();
+      renderWatchlist();
+
+      // update every 2.8 seconds
+      setInterval(updatePrices, 2800);
+
+      // initial update after a small delay
+      setTimeout(updatePrices, 300);
+
+      // restart ticker animation after any change (optional)
+      // but since we rebuild the inner HTML, we keep the animation via CSS
+      // Ensure animation is applied
       if (tickerInner) {
         tickerInner.style.animation = 'tickerScroll 28s linear infinite';
       }
-    }, 100);
-
-  })();
-</script>
+    })();
+  </script>
 </body>
 </html>
